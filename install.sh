@@ -247,7 +247,7 @@ function basic_optimization() {
 }
 
 function domain_check() {
-  domain="proxy.qq123.top"
+  domain="$1"
   domain_ipv4="$(dig +short "${domain}" a)"
   domain_ipv6="$(dig +short "${domain}" aaaa)"
   print_ok "正在获取 IP 地址信息，请耐心等待"
@@ -642,7 +642,7 @@ function install_xray_ws() {
   system_check
   dependency_install
   basic_optimization
-  domain_check
+  domain_check "$1"
   port_exist_check 80
   xray_install
   configure_xray_ws
