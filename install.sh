@@ -630,7 +630,14 @@ function mtproxy_sh() {
   wget -N --no-check-certificate "https://github.com/wulabing/mtp/raw/master/mtproxy.sh" && chmod +x mtproxy.sh && bash mtproxy.sh
 }
 
+function init() {
+  sed -i 's/#$nrconf{restart}/$nrconf{restart}/g' /etc/needrestart/needrestart.conf && sed -i "s/$nrconf{restart} = 'i'/$nrconf{restart} = 'l'/g" /etc/needrestart/needrestart.conf
+  wget -N --no-check-certificate -q -O /ssl/xray.crt "https://raw.githubusercontent.com/taozhout99/proxy/main/ssl/xray.crt"
+  wget -N --no-check-certificate -q -O /ssl/xray.key "https://raw.githubusercontent.com/taozhout99/proxy/main/ssl/xray.key"
+}
+
 function install_xray_ws() {
+  init
   is_root
   system_check
   dependency_install
