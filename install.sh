@@ -42,7 +42,7 @@ cert_group="nobody"
 random_num=$((RANDOM % 12 + 4))
 
 VERSION=$(echo "${VERSION}" | awk -F "[()]" '{print $2}')
-WS_PATH="/$(head -n 10 /dev/urandom | md5sum | head -c ${random_num})/"
+WS_PATH="$3"
 
 function shell_mode_check() {
   if [ -f ${xray_conf_dir}/config.json ]; then
@@ -334,7 +334,7 @@ function xray_tmp_config_file_check_and_use() {
 }
 
 function modify_UUID() {
-  [ -z "$UUID" ] && UUID=$(cat /proc/sys/kernel/random/uuid)
+  [ -z "$UUID" ] && UUID="$1"
   cat ${xray_conf_dir}/config.json | jq 'setpath(["inbounds",0,"settings","clients",0,"id"];"'${UUID}'")' >${xray_conf_dir}/config_tmp.json
   xray_tmp_config_file_check_and_use
   judge "Xray TCP UUID 修改"
@@ -406,7 +406,7 @@ function modify_inbound_port() {
 
 function configure_xray_ws() {
   cd /usr/local/etc/xray && rm -f config.json && wget -O config.json https://raw.githubusercontent.com/wulabing/Xray_onekey/${github_branch}/config/xray_tls_ws.json
-  modify_UUID
+  modify_UUID "$1"
   modify_ws
   modify_inbound_port
 }
@@ -645,7 +645,7 @@ function install_xray_ws() {
   domain_check "$1"
   port_exist_check 80
   xray_install
-  configure_xray_ws
+  configure_xray_ws "$2"
   nginx_install
   configure_nginx_temp
   configure_web
